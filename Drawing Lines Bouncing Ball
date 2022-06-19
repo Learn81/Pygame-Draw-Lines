@@ -1,0 +1,84 @@
+import pygame, sys
+
+
+pygame.init()
+clock = pygame.time.Clock() # time my frames by frames 
+width, height = 1000, 600  # window width and height 
+
+
+
+
+size = (40, 40) # the size
+radius = 10 # this smaller this number smaller the ball
+ball_filled = pygame.Surface(size) # filled the ball with size 
+pygame.draw.circle(ball_filled, 'lightblue', (radius, radius), radius) # then draw 
+ball_rect = ball_filled.get_rect(center=(375, 375)) # put a rect ground filled ball
+
+# the x and y speed 
+x_speed, y_speed = 5, 5
+
+# Defined a window method 
+def load_screen():
+    window = pygame.display.set_mode((width, height,), pygame.RESIZABLE)
+    return window
+
+# Assigning it to screen 
+screen = load_screen()
+
+
+
+def load_lines():
+    """ this is my 4 lines: top_line, bottom_line, right_side_line and left_side_line.
+    I'm using the colliderect and the ball_rect is bouncing around inside these 4 lines
+    """
+    global x_speed, y_speed
+    
+    # speed moving in the right.x direction and left.y direction  
+    ball_rect.x += x_speed
+    ball_rect.y += y_speed
+
+    # bouncing off right side after hitting the any of the sides moves in the other direction
+    right_side_line = pygame.draw.line(screen, "blue", (933, 35), (933, 525), 4)  
+    if ball_rect.colliderect(right_side_line):
+        x_speed = -2.7
+
+    # bouncing off left side 
+    left_side_line = pygame.draw.line(screen, 'yellow', (25, 520), (25, 40), 4)  
+    if ball_rect.colliderect(left_side_line):
+        x_speed = 2.7
+
+    # bouncing off top side 
+    top_line = pygame.draw.line(screen, "red", (30, 40), (930, 40), 4)  
+    if ball_rect.colliderect(top_line):
+        y_speed = 2.2
+    
+    # bouncing off bottom side 
+    bottom_line = pygame.draw.line(screen, "green", (30, 520), (930, 520), 4)  
+    if ball_rect.colliderect(bottom_line):
+        y_speed = -2
+
+    # blit it to screen both ball_filled and ball_rect
+    screen.blit(ball_filled, ball_rect)
+
+
+# this is the key handler, by pressing the 'q' key closes the window 
+def handle_keys():
+    screen.fill('black')
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_q:
+                quit()
+
+
+
+# loop what was defined to move frame by frame in window 
+while True:
+    handle_keys()
+    load_lines()
+    pygame.display.update()
+    clock.tick(90)
